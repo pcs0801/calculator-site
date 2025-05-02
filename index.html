@@ -1,18 +1,18 @@
-
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
   <meta charset="UTF-8" />
   <title>일반 계산기</title>
   <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-FRYR6M7T0D"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-FRYR6M7T0D"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
 
-  gtag('config', 'G-FRYR6M7T0D');
-</script>
+    gtag('config', 'G-FRYR6M7T0D');
+  </script>
   <meta name="description" content="다크모드, 복사 기능이 가능한 간편한 계산기 웹사이트입니다.">
   <meta name="keywords" content="계산기, 온라인 계산기, calculator, simple calculator, easy calculator">
   <style>
@@ -40,19 +40,88 @@
       background-color: var(--bg-color);
       color: var(--text-color);
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       align-items: center;
       padding: 30px;
     }
 
+
+    .tool-menu {
+      width: 200px;
+      background-color: #2c2c2c;
+      color: #fff;
+      padding: 10px;
+      overflow-y: auto;
+      border: 1px solid #444;
+    }
+
+    .light-mode .tool-menu {
+      background-color: #f3f3f3;
+      color: #000;
+      border: 1px solid #ccc;
+    }
+
+    .tool-menu img {
+      width: 18px;
+      height: 18px;
+      transition: filter 0.2s;
+    }
+
+    body:not(.light-mode) .tool-menu img {
+      filter: invert(1);
+    }
+
+    .menu-section {
+      margin-bottom: 20px;
+    }
+
+    .menu-section h4 {
+      margin: 0 0 10px;
+      color: #777;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 10px;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+
+    .menu-item:hover {
+      background: #e0e0e0;
+    }
+
+    .menu-item img {
+      width: 18px;
+      height: 18px;
+    }
+
+    .main {
+      flex-grow: 1;
+      padding: 30px;
+      background-color: #1e1e1e;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+
     #controls {
-      margin-bottom: 10px;
-      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
     }
 
     .toggle-label {
-      font-size: 14px;
-      margin-bottom: 4px;
+      position: absolute;
+      top: 4%;
+      left: 52%;
+      transform: translate(-50%, -50%);
     }
 
     .toggle-icons {
@@ -62,6 +131,9 @@
       overflow: hidden;
       width: 80px;
       height: 32px;
+      position: absolute;
+      top: 5%;
+      left: 50.3%;
     }
 
     .toggle-icons button {
@@ -73,6 +145,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
+
     }
 
     .toggle-icons img {
@@ -104,6 +177,9 @@
       display: flex;
       gap: 20px;
       margin-top: 10px;
+      position: absolute;
+      top: 8%;
+      left: 40%;
     }
 
     .calculator {
@@ -177,7 +253,9 @@
       padding: 15px;
       flex-grow: 1;
       min-height: 200px;
-     max-height: 220px;   overflow-y: auto; }
+      max-height: 220px;
+      overflow-y: auto;
+    }
 
     .panel-box h3 {
       margin-top: 0;
@@ -185,7 +263,13 @@
       margin-bottom: 10px;
     }
 
-    ul { list-style: none; padding-left: 10px; max-height: none; overflow: hidden; font-size: 0.9em; }
+    ul {
+      list-style: none;
+      padding-left: 10px;
+      max-height: none;
+      overflow: hidden;
+      font-size: 0.9em;
+    }
 
     .history-item {
       margin-bottom: 10px;
@@ -200,6 +284,7 @@
     .light-mode .history-formula {
       color: #555;
     }
+
     .history-formula {
       color: #aaa;
     }
@@ -208,31 +293,32 @@
       font-weight: bold;
       font-size: 1.1em;
     }
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  .copy-icon {
-    position: absolute;
-    top: 120px;
-    right: 275px;
-    font-size: 16px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    color: var(--text-color);
-    opacity: 0.7;
-    z-index: 10;
-  }
-  .copy-icon:hover {
-    opacity: 1;
-    filter: brightness(1.3);
-  }
+
+
+
+
+
+
+
+
+
+    .copy-icon {
+      position: absolute;
+      top: 3%;
+      left: -44%;
+      font-size: 16px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: var(--text-color);
+      opacity: 0.7;
+      z-index: 10;
+    }
+
+    .copy-icon:hover {
+      opacity: 1;
+      filter: brightness(1.3);
+    }
 
 
 
@@ -243,205 +329,247 @@
 
 
 
-  #languageToggle {
-    z-index: 1000;
-  }
-
-</style>
+    #languageToggle {
+      z-index: 1000;
+    }
+  </style>
 </head>
+
 <body class="light-mode">
-
-<div id="controls">
-  <div class="toggle-label">화면 테마 설정</div>
-  <div class="toggle-icons">
-    <button id="lightBtn" onclick="setTheme('light')">
-      <img src="https://img.icons8.com/emoji/48/sun-emoji.png" alt="Sun">
-    </button>
-    <button id="darkBtn" onclick="setTheme('dark')">
-      <img src="https://img.icons8.com/emoji/48/crescent-moon-emoji.png" alt="Moon">
-    </button>
-  </div>
-</div>
-
-<div class="container">
-  <div class="calculator">
-    <input type="text" id="display" class="display" onclick="copyDisplayText()" style="user-select: all; cursor: text;" readonly>
-<button onclick="copyDisplayText()" class="copy-icon" title="결과값 복사">📋</button>
-
-    <div class="buttons" id="buttons"></div>
-  </div>
-
-  <div class="side-panel">
-    <div class="panel-box">
-      <h3>기록</h3>
-      <ul id="historyList"></ul>
+  <div class="tool-menu">
+    <div class="menu-section">
+      <h4>Calculator</h4>
+      <div class="menu-item"><img src="./images/standard-calculator-50.png" alt="Standard Calculator Icon" /> Standard
+      </div>
+      <div class="menu-item"><img src="./images/scientific-calculator-64.png" alt="Scientific Calculator Icon" />
+        Scientific</div>
     </div>
-    <div class="panel-box">
-      <h3>메모리</h3>
-      <ul id="memoryList"></ul>
+    <div class="menu-section">
+      <h4>Growth</h4>
+      <div class="menu-item"><img src="./images/bmi-80.png" alt="BMI Icon" /> BMI</div>
+      <div class="menu-item"><img src="./images/birthday-50.png" alt="Age Icon" /> Age</div>
+      <div class="menu-item"><img src="./images/calender-64.png" alt="Date Icon" /> Date</div>
+    </div>
+    <div class="menu-section">
+      <h4>Finance</h4>
+      <div class="menu-item"><img src="./images/discount-64.png" alt="Discount Icon" /> Discount</div>
+      <div class="menu-item"><img src="./images/percentage-50.png" alt="Percentage Icon" /> Percentage</div>
+      <div class="menu-item"><img src="./images/split-bill-64.png" alt="Split Bill Icon" /> Split Bill</div>
+    </div>
+    <div class="menu-section">
+      <h4>Units</h4>
+      <div class="menu-item"><img src="./images/angle-64.png" alt="Angle Icon" /> Angle</div>
+      <div class="menu-item"><img src="./images/volume-50.png" alt="Volume Icon" /> Volume</div>
+      <div class="menu-item"><img src="./images/temperature-48.png" alt="Temperature Icon" /> Temperature</div>
+      <div class="menu-item"><img src="./images/speed-48.png" alt="Speed Icon" /> Speed</div>
+      <div class="menu-item"><img src="./images/time-48.png" alt="Time Icon" /> Time</div>
+      <div class="menu-item"><img src="./images/mass-48.png" alt="Mass Icon" /> Mass</div>
+      <div class="menu-item"><img src="./images/energy-50.png" alt="Energy Icon" /> Energy</div>
+      <div class="menu-item"><img src="./images/pressure-50.png" alt="Pressure Icon" /> Pressure</div>
+      <div class="menu-item"><img src="./images/frequency-60.png" alt="Frequency Icon" /> Frequency</div>
+    </div>
+    <div class="menu-section">
+      <h4>Digital</h4>
+      <div class="menu-item"><img src="./images/digital-storage-64.png" alt="Digital Storage Icon" /> Digital Storage
+      </div>
+      <div class="menu-item"><img src="./images/numeral-system-60.png" alt="Numeral System Icon" /> Numeral System</div>
     </div>
   </div>
-</div>
 
-<script>
-  const display = document.getElementById("display");
-  const historyList = document.getElementById("historyList");
-  const memoryList = document.getElementById("memoryList");
-  let currentValue = "";
-  let memory = 0;
+  <div id="controls">
+    <div class="toggle-label">화면 테마 설정</div>
+    <div class="toggle-icons">
+      <button id="lightBtn" onclick="setTheme('light')">
+        <img src="https://img.icons8.com/emoji/48/sun-emoji.png" alt="Sun">
+      </button>
+      <button id="darkBtn" onclick="setTheme('dark')">
+        <img src="https://img.icons8.com/emoji/48/crescent-moon-emoji.png" alt="Moon">
+      </button>
+    </div>
+  </div>
 
-  const symbols = { "×": "*", "÷": "/", "+": "+", "-": "-" };
 
-  function setTheme(mode) {
-    document.body.classList.toggle("light-mode", mode === "light");
-  }
+  <div class="container">
+    <div class="calculator">
+      <input type="text" id="display" class="display" onclick="copyDisplayText()"
+        style="user-select: all; cursor: text;" readonly>
+      <button onclick="copyDisplayText()" class="copy-icon" title="결과값 복사">📋</button>
 
-  function formatNumber(val) {
-    if (isNaN(val)) return val;
-    const [intPart, decPart] = val.toString().split(".");
-    const formatted = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    return decPart ? formatted + "." + decPart : formatted;
-  }
+      <div class="buttons" id="buttons"></div>
+    </div>
 
-  function updateDisplay(value) {
-    currentValue = value.toString().replace(/,/g, "");
-    display.value = formatNumber(currentValue);
-  }
+    <div class="side-panel">
+      <div class="panel-box">
+        <h3>기록</h3>
+        <ul id="historyList"></ul>
+      </div>
+      <div class="panel-box">
+        <h3>메모리</h3>
+        <ul id="memoryList"></ul>
+      </div>
+    </div>
+  </div>
 
-  function press(val) {
-    if (val === "√") updateDisplay(Math.sqrt(parseFloat(currentValue) || 0));
-    else if (val === "x²") updateDisplay(Math.pow(parseFloat(currentValue) || 0, 2));
-    else if (val === "1/x") updateDisplay(1 / (parseFloat(currentValue) || 1));
-    else if (val === "+/-") updateDisplay((parseFloat(currentValue || "0") * -1).toString());
-    else {
-      currentValue += val;
-      updateDisplay(currentValue);
-      currentValue = display.value.replace(/,/g, '');
+  <script>
+    const display = document.getElementById("display");
+    const historyList = document.getElementById("historyList");
+    const memoryList = document.getElementById("memoryList");
+    let currentValue = "";
+    let memory = 0;
+
+    const symbols = { "×": "*", "÷": "/", "+": "+", "-": "-" };
+
+    function setTheme(mode) {
+      document.body.classList.toggle("light-mode", mode === "light");
     }
-  }
 
-  function calculate() {
-    try {
-      let expr = currentValue;
-      for (const key in symbols) expr = expr.split(key).join(symbols[key]);
-      const result = eval(expr);
-      const formatted = formatNumber(result);
-      const li = document.createElement("li");
-      li.className = "history-item";
-      li.innerHTML = `<div class="history-formula">${currentValue.replace(/([+\-×÷])/g, " $1 ")} =</div><div class="history-result">${formatted}</div>`;
-      li.onclick = () => updateDisplay(result);
-      historyList.insertBefore(li, historyList.firstChild);
-      updateDisplay(result);
-    } catch {
-      updateDisplay(langData[currentLang].error);
+    function formatNumber(val) {
+      if (isNaN(val)) return val;
+      const [intPart, decPart] = val.toString().split(".");
+      const formatted = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return decPart ? formatted + "." + decPart : formatted;
     }
-  }
 
-  function clearAll() { updateDisplay(""); }
-  function clearEntry() { updateDisplay(""); }
-  function backspace() {
-    currentValue = currentValue.trim().slice(0, -1);
-    updateDisplay(currentValue);
-    updateDisplay(currentValue);
-  }
-  function memClear() { memory = 0; memoryList.innerHTML = ""; }
-  function memRecall() { updateDisplay(currentValue + memory.toString()); }
-  function memAdd() { memory += parseFloat(currentValue) || 0; memoryList.innerHTML += `<li>+ ${formatNumber(currentValue)}</li>`; }
-  function memSub() { memory -= parseFloat(currentValue) || 0; memoryList.innerHTML += `<li>- ${formatNumber(currentValue)}</li>`; }
-
-  document.addEventListener("keydown", (e) => {
-    const key = e.key;
-    if (!isNaN(key) || ["+", "-", "*", "/", "."].includes(key)) {
-      const symbol = key.replace("*", "×").replace("/", "÷");
-      press(symbol);
-    } else if (key === "Enter") calculate();
-    else if (key === "Backspace") backspace();
-    else if (key.toLowerCase() === "c") clearAll();
-  });
-
-  const buttonMap = [
-    ["MC", "MR", "M+", "M-"],
-    ["%", "CE", "C", "⌫"],
-    ["1/x", "x²", "√", "÷"],
-    ["7", "8", "9", "×"],
-    ["4", "5", "6", "-"],
-    ["1", "2", "3", "+"],
-    ["+/-", "0", ".", "="]
-  ];
-
-  const buttonContainer = document.getElementById("buttons");
-  buttonMap.forEach(row =>
-    row.forEach(text => {
-      const btn = document.createElement("button");
-      btn.textContent = text;
-      btn.className = isNaN(text) && ![".", "+/-", "="].includes(text) ? "btn-operator" : "btn-number";
-      if (text === "=") { btn.onclick = calculate; btn.className = "btn-operator"; }
-      else if (text === "C") btn.onclick = clearAll;
-      else if (text === "CE") btn.onclick = clearEntry;
-      else if (text === "⌫") btn.onclick = backspace;
-      else if (text === "MC") btn.onclick = memClear;
-      else if (text === "MR") btn.onclick = memRecall;
-      else if (text === "M+") btn.onclick = memAdd;
-      else if (text === "M-") btn.onclick = memSub;
-      else btn.onclick = () => press(text);
-      buttonContainer.appendChild(btn);
-    })
-  );
-
-function copyDisplayText() {
-  navigator.clipboard.writeText(display.value).then(() => {
-    console.log("Copied to clipboard");
-  }).catch(err => {
-    console.error("Copy failed", err);
-  });
-}
-
-
-document.querySelector(".display").addEventListener("copy", function (e) {
-  e.clipboardData.setData("text/plain", display.value);
-  e.preventDefault(); // prevent default copy behavior that might interfere
-});
-
-
-let currentLang = 'ko';
-const langData = {
-  ko: {
-    record: '기록',
-    memory: '메모리',
-    theme: '화면 테마 설정',
-    error: '오류',
-    buttons: {
-      "결과값 복사": "결과값 복사",
+    function updateDisplay(value) {
+      currentValue = value.toString().replace(/,/g, "");
+      display.value = formatNumber(currentValue);
     }
-  },
-  en: {
-    record: 'History',
-    memory: 'Memory',
-    theme: 'Theme Mode',
-    error: 'Error',
-    buttons: {
-      "결과값 복사": "Copy Result"
-    }
-  }
-};
 
-function toggleLanguage() {
-  currentLang = currentLang === 'ko' ? 'en' : 'ko';
-  document.getElementById('langText').innerText = currentLang === 'ko' ? 'KO' : 'EN';
-  document.querySelector('.panel-box h3').innerText = langData[currentLang].record;
-  document.querySelectorAll('.panel-box h3')[1].innerText = langData[currentLang].memory;
-  document.querySelector('.toggle-label').innerText = langData[currentLang].theme;
-
-  document.querySelectorAll('button').forEach(btn => {
-    const label = btn.innerText.trim();
-    for (const [ko, en] of Object.entries(langData.ko.buttons)) {
-      if (label === ko || label === langData.en.buttons[ko]) {
-        btn.innerText = langData[currentLang].buttons[ko];
+    function press(val) {
+      if (val === "√") updateDisplay(Math.sqrt(parseFloat(currentValue) || 0));
+      else if (val === "x²") updateDisplay(Math.pow(parseFloat(currentValue) || 0, 2));
+      else if (val === "1/x") updateDisplay(1 / (parseFloat(currentValue) || 1));
+      else if (val === "+/-") updateDisplay((parseFloat(currentValue || "0") * -1).toString());
+      else {
+        currentValue += val;
+        updateDisplay(currentValue);
+        currentValue = display.value.replace(/,/g, '');
       }
     }
-  });
-}
 
-</script>
+    function calculate() {
+      try {
+        let expr = currentValue;
+        for (const key in symbols) expr = expr.split(key).join(symbols[key]);
+        const result = eval(expr);
+        const formatted = formatNumber(result);
+        const li = document.createElement("li");
+        li.className = "history-item";
+        li.innerHTML = `<div class="history-formula">${currentValue.replace(/([+\-×÷])/g, " $1 ")} =</div><div class="history-result">${formatted}</div>`;
+        li.onclick = () => updateDisplay(result);
+        historyList.insertBefore(li, historyList.firstChild);
+        updateDisplay(result);
+      } catch {
+        updateDisplay(langData[currentLang].error);
+      }
+    }
+
+    function clearAll() { updateDisplay(""); }
+    function clearEntry() { updateDisplay(""); }
+    function backspace() {
+      currentValue = currentValue.trim().slice(0, -1);
+      updateDisplay(currentValue);
+      updateDisplay(currentValue);
+    }
+    function memClear() { memory = 0; memoryList.innerHTML = ""; }
+    function memRecall() { updateDisplay(currentValue + memory.toString()); }
+    function memAdd() { memory += parseFloat(currentValue) || 0; memoryList.innerHTML += `<li>+ ${formatNumber(currentValue)}</li>`; }
+    function memSub() { memory -= parseFloat(currentValue) || 0; memoryList.innerHTML += `<li>- ${formatNumber(currentValue)}</li>`; }
+
+    document.addEventListener("keydown", (e) => {
+      const key = e.key;
+      if (!isNaN(key) || ["+", "-", "*", "/", "."].includes(key)) {
+        const symbol = key.replace("*", "×").replace("/", "÷");
+        press(symbol);
+      } else if (key === "Enter") calculate();
+      else if (key === "Backspace") backspace();
+      else if (key.toLowerCase() === "c") clearAll();
+    });
+
+    const buttonMap = [
+      ["MC", "MR", "M+", "M-"],
+      ["%", "CE", "C", "⌫"],
+      ["1/x", "x²", "√", "÷"],
+      ["7", "8", "9", "×"],
+      ["4", "5", "6", "-"],
+      ["1", "2", "3", "+"],
+      ["+/-", "0", ".", "="]
+    ];
+
+    const buttonContainer = document.getElementById("buttons");
+    buttonMap.forEach(row =>
+      row.forEach(text => {
+        const btn = document.createElement("button");
+        btn.textContent = text;
+        btn.className = isNaN(text) && ![".", "+/-", "="].includes(text) ? "btn-operator" : "btn-number";
+        if (text === "=") { btn.onclick = calculate; btn.className = "btn-operator"; }
+        else if (text === "C") btn.onclick = clearAll;
+        else if (text === "CE") btn.onclick = clearEntry;
+        else if (text === "⌫") btn.onclick = backspace;
+        else if (text === "MC") btn.onclick = memClear;
+        else if (text === "MR") btn.onclick = memRecall;
+        else if (text === "M+") btn.onclick = memAdd;
+        else if (text === "M-") btn.onclick = memSub;
+        else btn.onclick = () => press(text);
+        buttonContainer.appendChild(btn);
+      })
+    );
+
+    function copyDisplayText() {
+      navigator.clipboard.writeText(display.value).then(() => {
+        console.log("Copied to clipboard");
+      }).catch(err => {
+        console.error("Copy failed", err);
+      });
+    }
+
+
+    document.querySelector(".display").addEventListener("copy", function (e) {
+      e.clipboardData.setData("text/plain", display.value);
+      e.preventDefault(); // prevent default copy behavior that might interfere
+    });
+
+
+    let currentLang = 'ko';
+    const langData = {
+      ko: {
+        record: '기록',
+        memory: '메모리',
+        theme: '화면 테마 설정',
+        error: '오류',
+        buttons: {
+          "결과값 복사": "결과값 복사",
+        }
+      },
+      en: {
+        record: 'History',
+        memory: 'Memory',
+        theme: 'Theme Mode',
+        error: 'Error',
+        buttons: {
+          "결과값 복사": "Copy Result"
+        }
+      }
+    };
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'ko' ? 'en' : 'ko';
+      document.getElementById('langText').innerText = currentLang === 'ko' ? 'KO' : 'EN';
+      document.querySelector('.panel-box h3').innerText = langData[currentLang].record;
+      document.querySelectorAll('.panel-box h3')[1].innerText = langData[currentLang].memory;
+      document.querySelector('.toggle-label').innerText = langData[currentLang].theme;
+
+      document.querySelectorAll('button').forEach(btn => {
+        const label = btn.innerText.trim();
+        for (const [ko, en] of Object.entries(langData.ko.buttons)) {
+          if (label === ko || label === langData.en.buttons[ko]) {
+            btn.innerText = langData[currentLang].buttons[ko];
+          }
+        }
+      });
+    }
+
+  </script>
 </body>
+
 </html>
