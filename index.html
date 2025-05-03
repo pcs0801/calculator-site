@@ -294,14 +294,6 @@
       font-size: 1.1em;
     }
 
-
-
-
-
-
-
-
-
     .copy-icon {
       position: absolute;
       top: 3%;
@@ -320,14 +312,9 @@
       filter: brightness(1.3);
     }
 
-
-
-
-
-
-
-
-
+    body:not(.light-mode) #bmiValueBox {
+      color: black;
+    }
 
     #languageToggle {
       z-index: 1000;
@@ -414,8 +401,20 @@
       <button onclick="calculateBMI()" class="btn-operator" style="margin-top: 10px;">계산하기</button>
 
       <div id="bmiResult" style="margin-top: 15px; font-weight: bold;"></div>
-    </div>
+      <div id="bmiChart" style="display: none; margin-top: 20px; width: 100%;">
+        <div style="text-align: center; font-weight: bold;">
+          당신의 BMI지수 <span id="bmiValueBox" style="background:white; padding: 2px 6px; border-radius: 4px;">?</span>
+        </div>
+        <div style="display: flex; font-size: 0.8em; text-align: center; margin-top: 5px;">
+          <div style="flex: 1; background: #7baedc; color: white;">저체중<br>~18.5</div>
+          <div style="flex: 1; background: #4a90e2; color: white;">정상<br>18.5~23</div>
+          <div style="flex: 1; background: #7b6dd2; color: white;">과체중<br>23~25</div>
+          <div style="flex: 1; background: #c88fea; color: white;">비만<br>25~30</div>
+          <div style="flex: 1; background: #f15a5a; color: white;">고도비만<br>30~</div>
+        </div>
+      </div>
 
+    </div>
     <div class="side-panel">
       <div class="panel-box">
         <h3>기록</h3>
@@ -426,179 +425,223 @@
         <ul id="memoryList"></ul>
       </div>
     </div>
-  </div>
 
-  <script>
-    const display = document.getElementById("display");
-    const historyList = document.getElementById("historyList");
-    const memoryList = document.getElementById("memoryList");
-    let currentValue = "";
-    let memory = 0;
+    <script>
+      const display = document.getElementById("display");
+      const historyList = document.getElementById("historyList");
+      const memoryList = document.getElementById("memoryList");
+      let currentValue = "";
+      let memory = 0;
 
-    const symbols = { "×": "*", "÷": "/", "+": "+", "-": "-" };
+      const symbols = { "×": "*", "÷": "/", "+": "+", "-": "-" };
 
-    function setTheme(mode) {
-      document.body.classList.toggle("light-mode", mode === "light");
-    }
+      function setTheme(mode) {
+        document.body.classList.toggle("light-mode", mode === "light");
+      }
 
-    function formatNumber(val) {
-      if (isNaN(val)) return val;
-      const [intPart, decPart] = val.toString().split(".");
-      const formatted = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-      return decPart ? formatted + "." + decPart : formatted;
-    }
+      function formatNumber(val) {
+        if (isNaN(val)) return val;
+        const [intPart, decPart] = val.toString().split(".");
+        const formatted = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return decPart ? formatted + "." + decPart : formatted;
+      }
 
-    function updateDisplay(value) {
-      currentValue = value.toString().replace(/,/g, "");
-      display.value = formatNumber(currentValue);
-    }
+      function updateDisplay(value) {
+        currentValue = value.toString().replace(/,/g, "");
+        display.value = formatNumber(currentValue);
+      }
 
-    function press(val) {
-      if (val === "√") updateDisplay(Math.sqrt(parseFloat(currentValue) || 0));
-      else if (val === "x²") updateDisplay(Math.pow(parseFloat(currentValue) || 0, 2));
-      else if (val === "1/x") updateDisplay(1 / (parseFloat(currentValue) || 1));
-      else if (val === "+/-") updateDisplay((parseFloat(currentValue || "0") * -1).toString());
-      else {
-        currentValue += val;
+      function press(val) {
+        if (val === "√") updateDisplay(Math.sqrt(parseFloat(currentValue) || 0));
+        else if (val === "x²") updateDisplay(Math.pow(parseFloat(currentValue) || 0, 2));
+        else if (val === "1/x") updateDisplay(1 / (parseFloat(currentValue) || 1));
+        else if (val === "+/-") updateDisplay((parseFloat(currentValue || "0") * -1).toString());
+        else {
+          currentValue += val;
+          updateDisplay(currentValue);
+          currentValue = display.value.replace(/,/g, '');
+        }
+      }
+
+      function calculate() {
+        try {
+          let expr = currentValue;
+          for (const key in symbols) expr = expr.split(key).join(symbols[key]);
+          const result = eval(expr);
+          const formatted = formatNumber(result);
+          const li = document.createElement("li");
+          li.className = "history-item";
+          li.innerHTML = `<div class="history-formula">${currentValue.replace(/([+\-×÷])/g, " $1 ")} =</div><div class="history-result">${formatted}</div>`;
+          li.onclick = () => updateDisplay(result);
+          historyList.insertBefore(li, historyList.firstChild);
+          updateDisplay(result);
+        } catch {
+          updateDisplay(langData[currentLang].error);
+        }
+      }
+
+      function clearAll() { updateDisplay(""); }
+      function clearEntry() { updateDisplay(""); }
+      function backspace() {
+        currentValue = currentValue.trim().slice(0, -1);
         updateDisplay(currentValue);
-        currentValue = display.value.replace(/,/g, '');
+        updateDisplay(currentValue);
       }
-    }
+      function memClear() { memory = 0; memoryList.innerHTML = ""; }
+      function memRecall() { updateDisplay(currentValue + memory.toString()); }
+      function memAdd() { memory += parseFloat(currentValue) || 0; memoryList.innerHTML += `<li>+ ${formatNumber(currentValue)}</li>`; }
+      function memSub() { memory -= parseFloat(currentValue) || 0; memoryList.innerHTML += `<li>- ${formatNumber(currentValue)}</li>`; }
 
-    function calculate() {
-      try {
-        let expr = currentValue;
-        for (const key in symbols) expr = expr.split(key).join(symbols[key]);
-        const result = eval(expr);
-        const formatted = formatNumber(result);
-        const li = document.createElement("li");
-        li.className = "history-item";
-        li.innerHTML = `<div class="history-formula">${currentValue.replace(/([+\-×÷])/g, " $1 ")} =</div><div class="history-result">${formatted}</div>`;
-        li.onclick = () => updateDisplay(result);
-        historyList.insertBefore(li, historyList.firstChild);
-        updateDisplay(result);
-      } catch {
-        updateDisplay(langData[currentLang].error);
-      }
-    }
-
-    function clearAll() { updateDisplay(""); }
-    function clearEntry() { updateDisplay(""); }
-    function backspace() {
-      currentValue = currentValue.trim().slice(0, -1);
-      updateDisplay(currentValue);
-      updateDisplay(currentValue);
-    }
-    function memClear() { memory = 0; memoryList.innerHTML = ""; }
-    function memRecall() { updateDisplay(currentValue + memory.toString()); }
-    function memAdd() { memory += parseFloat(currentValue) || 0; memoryList.innerHTML += `<li>+ ${formatNumber(currentValue)}</li>`; }
-    function memSub() { memory -= parseFloat(currentValue) || 0; memoryList.innerHTML += `<li>- ${formatNumber(currentValue)}</li>`; }
-
-    document.addEventListener("keydown", (e) => {
-      const key = e.key;
-      if (!isNaN(key) || ["+", "-", "*", "/", "."].includes(key)) {
-        const symbol = key.replace("*", "×").replace("/", "÷");
-        press(symbol);
-      } else if (key === "Enter") calculate();
-      else if (key === "Backspace") backspace();
-      else if (key.toLowerCase() === "c") clearAll();
-    });
-
-    const buttonMap = [
-      ["MC", "MR", "M+", "M-"],
-      ["%", "CE", "C", "⌫"],
-      ["1/x", "x²", "√", "÷"],
-      ["7", "8", "9", "×"],
-      ["4", "5", "6", "-"],
-      ["1", "2", "3", "+"],
-      ["+/-", "0", ".", "="]
-    ];
-
-    const buttonContainer = document.getElementById("buttons");
-    buttonMap.forEach(row =>
-      row.forEach(text => {
-        const btn = document.createElement("button");
-        btn.textContent = text;
-        btn.className = isNaN(text) && ![".", "+/-", "="].includes(text) ? "btn-operator" : "btn-number";
-        if (text === "=") { btn.onclick = calculate; btn.className = "btn-operator"; }
-        else if (text === "C") btn.onclick = clearAll;
-        else if (text === "CE") btn.onclick = clearEntry;
-        else if (text === "⌫") btn.onclick = backspace;
-        else if (text === "MC") btn.onclick = memClear;
-        else if (text === "MR") btn.onclick = memRecall;
-        else if (text === "M+") btn.onclick = memAdd;
-        else if (text === "M-") btn.onclick = memSub;
-        else btn.onclick = () => press(text);
-        buttonContainer.appendChild(btn);
-      })
-    );
-
-    function copyDisplayText() {
-      navigator.clipboard.writeText(display.value).then(() => {
-        console.log("Copied to clipboard");
-      }).catch(err => {
-        console.error("Copy failed", err);
+      document.addEventListener("keydown", (e) => {
+        const key = e.key;
+        if (!isNaN(key) || ["+", "-", "*", "/", "."].includes(key)) {
+          const symbol = key.replace("*", "×").replace("/", "÷");
+          press(symbol);
+        } else if (key === "Enter") calculate();
+        else if (key === "Backspace") backspace();
+        else if (key.toLowerCase() === "c") clearAll();
       });
-    }
 
+      const buttonMap = [
+        ["MC", "MR", "M+", "M-"],
+        ["%", "CE", "C", "⌫"],
+        ["1/x", "x²", "√", "÷"],
+        ["7", "8", "9", "×"],
+        ["4", "5", "6", "-"],
+        ["1", "2", "3", "+"],
+        ["+/-", "0", ".", "="]
+      ];
 
-    document.querySelector(".display").addEventListener("copy", function (e) {
-      e.clipboardData.setData("text/plain", display.value);
-      e.preventDefault(); // prevent default copy behavior that might interfere
-    });
+      const buttonContainer = document.getElementById("buttons");
+      buttonMap.forEach(row =>
+        row.forEach(text => {
+          const btn = document.createElement("button");
+          btn.textContent = text;
+          btn.className = isNaN(text) && ![".", "+/-", "="].includes(text) ? "btn-operator" : "btn-number";
+          if (text === "=") { btn.onclick = calculate; btn.className = "btn-operator"; }
+          else if (text === "C") btn.onclick = clearAll;
+          else if (text === "CE") btn.onclick = clearEntry;
+          else if (text === "⌫") btn.onclick = backspace;
+          else if (text === "MC") btn.onclick = memClear;
+          else if (text === "MR") btn.onclick = memRecall;
+          else if (text === "M+") btn.onclick = memAdd;
+          else if (text === "M-") btn.onclick = memSub;
+          else btn.onclick = () => press(text);
+          buttonContainer.appendChild(btn);
+        })
+      );
 
-
-    let currentLang = 'ko';
-    const langData = {
-      ko: {
-        record: '기록',
-        memory: '메모리',
-        theme: '화면 테마 설정',
-        error: '오류',
-        buttons: {
-          "결과값 복사": "결과값 복사",
-        }
-      },
-      en: {
-        record: 'History',
-        memory: 'Memory',
-        theme: 'Theme Mode',
-        error: 'Error',
-        buttons: {
-          "결과값 복사": "Copy Result"
-        }
+      function copyDisplayText() {
+        navigator.clipboard.writeText(display.value).then(() => {
+          console.log("Copied to clipboard");
+        }).catch(err => {
+          console.error("Copy failed", err);
+        });
       }
-    };
 
-    function toggleLanguage() {
-      currentLang = currentLang === 'ko' ? 'en' : 'ko';
-      document.getElementById('langText').innerText = currentLang === 'ko' ? 'KO' : 'EN';
-      document.querySelector('.panel-box h3').innerText = langData[currentLang].record;
-      document.querySelectorAll('.panel-box h3')[1].innerText = langData[currentLang].memory;
-      document.querySelector('.toggle-label').innerText = langData[currentLang].theme;
 
-      document.querySelectorAll('button').forEach(btn => {
-        const label = btn.innerText.trim();
-        for (const [ko, en] of Object.entries(langData.ko.buttons)) {
-          if (label === ko || label === langData.en.buttons[ko]) {
-            btn.innerText = langData[currentLang].buttons[ko];
+      document.querySelector(".display").addEventListener("copy", function (e) {
+        e.clipboardData.setData("text/plain", display.value);
+        e.preventDefault(); // prevent default copy behavior that might interfere
+      });
+
+
+      let currentLang = 'ko';
+      const langData = {
+        ko: {
+          record: '기록',
+          memory: '메모리',
+          theme: '화면 테마 설정',
+          error: '오류',
+          buttons: {
+            "결과값 복사": "결과값 복사",
+          }
+        },
+        en: {
+          record: 'History',
+          memory: 'Memory',
+          theme: 'Theme Mode',
+          error: 'Error',
+          buttons: {
+            "결과값 복사": "Copy Result"
           }
         }
+      };
+
+      function toggleLanguage() {
+        currentLang = currentLang === 'ko' ? 'en' : 'ko';
+        document.getElementById('langText').innerText = currentLang === 'ko' ? 'KO' : 'EN';
+        document.querySelector('.panel-box h3').innerText = langData[currentLang].record;
+        document.querySelectorAll('.panel-box h3')[1].innerText = langData[currentLang].memory;
+        document.querySelector('.toggle-label').innerText = langData[currentLang].theme;
+
+        document.querySelectorAll('button').forEach(btn => {
+          const label = btn.innerText.trim();
+          for (const [ko, en] of Object.entries(langData.ko.buttons)) {
+            if (label === ko || label === langData.en.buttons[ko]) {
+              btn.innerText = langData[currentLang].buttons[ko];
+            }
+          }
+        });
+      }
+      document.getElementById("bmiMenu").addEventListener("click", () => {
+        document.querySelector(".calculator").style.display = "none";
+        document.querySelector(".bmi-calculator").style.display = "flex";
+        document.querySelector(".side-panel").style.display = "none";
+
+        const container = document.querySelector(".container");
+        container.style.flexDirection = "column";
+        container.style.alignItems = "center";
       });
-    }
-    document.getElementById("bmiMenu").addEventListener("click", () => {
-      document.querySelector(".calculator").style.display = "none";
-      document.querySelector(".bmi-calculator").style.display = "flex";
-      document.querySelector(".side-panel").style.display = "none";
-    });
 
-    document.getElementById("standardMenu").addEventListener("click", () => {
-      document.querySelector(".calculator").style.display = "flex";
-      document.querySelector(".bmi-calculator").style.display = "none";
-      document.querySelector(".side-panel").style.display = "flex";
-    });
+      document.getElementById("standardMenu").addEventListener("click", () => {
+        document.querySelector(".calculator").style.display = "block";
+        document.querySelector(".bmi-calculator").style.display = "none";
+        document.querySelector(".side-panel").style.display = "flex";
 
-  </script>
+        const container = document.querySelector(".container");
+        container.style.flexDirection = "row";         // ✅ row로 복원
+        container.style.alignItems = "flex-start";     // ✅ 원래 위치 복원
+        container.style.justifyContent = "flex-start"; // ✅ 왼쪽 정렬
+
+        const bmiChart = document.getElementById("bmiChart");
+        if (bmiChart) {
+          bmiChart.style.display = "none";
+        }
+      });
+
+      function calculateBMI() {
+        const height = parseFloat(document.getElementById("heightInput").value);
+        const weight = parseFloat(document.getElementById("weightInput").value);
+        const resultDiv = document.getElementById("bmiResult");
+
+        if (!height || !weight || height <= 0 || weight <= 0) {
+          resultDiv.textContent = "올바른 값을 입력해주세요.";
+          return;
+        }
+
+        const bmi = weight / Math.pow(height / 100, 2);
+        let status = "";
+
+        if (bmi < 18.5) status = "저체중";
+        else if (bmi < 23) status = "정상";
+        else if (bmi < 25) status = "과체중";
+        else if (bmi < 30) status = "비만";
+        else status = "고도비만";
+
+        resultDiv.textContent = `당신의 BMI는 ${bmi.toFixed(1)}이며, ${status}입니다.`;
+
+        const bmiValueBox = document.getElementById("bmiValueBox");
+        const bmiChart = document.getElementById("bmiChart");
+
+        if (bmiValueBox && bmiChart) {
+          bmiValueBox.textContent = bmi.toFixed(1);
+          bmiChart.style.display = "block"; // ✅ 계산 후 차트 보이게
+        }
+      }
+
+
+    </script>
 </body>
 
 </html>
