@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>일반 계산기</title>
+  <title>Easy Calculators</title>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-FRYR6M7T0D"></script>
   <script>
@@ -339,14 +339,15 @@
   <div class="tool-menu">
     <div class="menu-section">
       <h4>Calculator</h4>
-      <div class="menu-item"><img src="./images/standard-calculator-50.png" alt="Standard Calculator Icon" /> Standard
+      <div class="menu-item" id="standardMenu"><img src="./images/standard-calculator-50.png"
+          alt="Standard Calculator Icon" /> Standard
       </div>
       <div class="menu-item"><img src="./images/scientific-calculator-64.png" alt="Scientific Calculator Icon" />
         Scientific</div>
     </div>
     <div class="menu-section">
       <h4>Growth</h4>
-      <div class="menu-item"><img src="./images/bmi-80.png" alt="BMI Icon" /> BMI</div>
+      <div class="menu-item" id="bmiMenu"><img src="./images/bmi-80.png" alt="BMI Icon" /> BMI</div>
       <div class="menu-item"><img src="./images/birthday-50.png" alt="Age Icon" /> Age</div>
       <div class="menu-item"><img src="./images/calender-64.png" alt="Date Icon" /> Date</div>
     </div>
@@ -396,6 +397,23 @@
       <button onclick="copyDisplayText()" class="copy-icon" title="결과값 복사">📋</button>
 
       <div class="buttons" id="buttons"></div>
+    </div>
+
+    <div class="bmi-calculator" style="display: none; flex-direction: column; gap: 10px;
+         background-color: var(--calculator-bg); padding: 20px;
+         border-radius: 10px; color: var(--text-color); width: 360px;">
+      <h2 style="margin-top: 0;">BMI 계산기</h2>
+      <label for="heightInput">신장(cm)</label>
+      <input id="heightInput" type="number" placeholder="예: 170"
+        style="padding: 10px; border-radius: 5px; border: none;" />
+
+      <label for="weightInput">체중(kg)</label>
+      <input id="weightInput" type="number" placeholder="예: 65"
+        style="padding: 10px; border-radius: 5px; border: none;" />
+
+      <button onclick="calculateBMI()" class="btn-operator" style="margin-top: 10px;">계산하기</button>
+
+      <div id="bmiResult" style="margin-top: 15px; font-weight: bold;"></div>
     </div>
 
     <div class="side-panel">
@@ -568,6 +586,17 @@
         }
       });
     }
+    document.getElementById("bmiMenu").addEventListener("click", () => {
+      document.querySelector(".calculator").style.display = "none";
+      document.querySelector(".bmi-calculator").style.display = "flex";
+      document.querySelector(".side-panel").style.display = "none";
+    });
+
+    document.getElementById("standardMenu").addEventListener("click", () => {
+      document.querySelector(".calculator").style.display = "flex";
+      document.querySelector(".bmi-calculator").style.display = "none";
+      document.querySelector(".side-panel").style.display = "flex";
+    });
 
   </script>
 </body>
