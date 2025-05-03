@@ -315,6 +315,30 @@
     body:not(.light-mode) #bmiValueBox {
       color: black;
     }
+    
+    .date-calculator {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.date-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.date-row label {
+  flex: 1;
+}
+
+.date-row input {
+  flex: 2;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+}
 
     #languageToggle {
       z-index: 1000;
@@ -330,37 +354,39 @@
           alt="Standard Calculator Icon" /> Standard
       </div>
       <div class="menu-item"><img src="./images/scientific-calculator-64.png" alt="Scientific Calculator Icon" />
-        Scientific</div>
+        Scientific (TBU)</div>
     </div>
     <div class="menu-section">
       <h4>Growth</h4>
       <div class="menu-item" id="bmiMenu"><img src="./images/bmi-80.png" alt="BMI Icon" /> BMI</div>
-      <div class="menu-item"><img src="./images/birthday-50.png" alt="Age Icon" /> Age</div>
-      <div class="menu-item"><img src="./images/calender-64.png" alt="Date Icon" /> Date</div>
+      <div class="menu-item"><img src="./images/birthday-50.png" alt="Age Icon" /> Age (TBU)</div>
+      <div class="menu-item" id="dateMenu"><img src="./images/calender-64.png" alt="Date Icon" /> Date</div>
     </div>
     <div class="menu-section">
       <h4>Finance</h4>
-      <div class="menu-item"><img src="./images/discount-64.png" alt="Discount Icon" /> Discount</div>
-      <div class="menu-item"><img src="./images/percentage-50.png" alt="Percentage Icon" /> Percentage</div>
-      <div class="menu-item"><img src="./images/split-bill-64.png" alt="Split Bill Icon" /> Split Bill</div>
+      <div class="menu-item"><img src="./images/discount-64.png" alt="Discount Icon" /> Discount (TBU)</div>
+      <div class="menu-item"><img src="./images/percentage-50.png" alt="Percentage Icon" /> Percentage (TBU)</div>
+      <div class="menu-item"><img src="./images/split-bill-64.png" alt="Split Bill Icon" /> Split Bill (TBU)</div>
     </div>
     <div class="menu-section">
       <h4>Units</h4>
-      <div class="menu-item"><img src="./images/angle-64.png" alt="Angle Icon" /> Angle</div>
-      <div class="menu-item"><img src="./images/volume-50.png" alt="Volume Icon" /> Volume</div>
-      <div class="menu-item"><img src="./images/temperature-48.png" alt="Temperature Icon" /> Temperature</div>
-      <div class="menu-item"><img src="./images/speed-48.png" alt="Speed Icon" /> Speed</div>
-      <div class="menu-item"><img src="./images/time-48.png" alt="Time Icon" /> Time</div>
-      <div class="menu-item"><img src="./images/mass-48.png" alt="Mass Icon" /> Mass</div>
-      <div class="menu-item"><img src="./images/energy-50.png" alt="Energy Icon" /> Energy</div>
-      <div class="menu-item"><img src="./images/pressure-50.png" alt="Pressure Icon" /> Pressure</div>
-      <div class="menu-item"><img src="./images/frequency-60.png" alt="Frequency Icon" /> Frequency</div>
+      <div class="menu-item"><img src="./images/angle-64.png" alt="Angle Icon" /> Angle (TBU)</div>
+      <div class="menu-item"><img src="./images/volume-50.png" alt="Volume Icon" /> Volume (TBU)</div>
+      <div class="menu-item"><img src="./images/temperature-48.png" alt="Temperature Icon" /> Temperature (TBU)</div>
+      <div class="menu-item"><img src="./images/speed-48.png" alt="Speed Icon" /> Speed (TBU)</div>
+      <div class="menu-item"><img src="./images/time-48.png" alt="Time Icon" /> Time (TBU)</div>
+      <div class="menu-item"><img src="./images/mass-48.png" alt="Mass Icon" /> Mass (TBU)</div>
+      <div class="menu-item"><img src="./images/energy-50.png" alt="Energy Icon" /> Energy (TBU)</div>
+      <div class="menu-item"><img src="./images/pressure-50.png" alt="Pressure Icon" /> Pressure (TBU)</div>
+      <div class="menu-item"><img src="./images/frequency-60.png" alt="Frequency Icon" /> Frequency (TBU)</div>
     </div>
     <div class="menu-section">
       <h4>Digital</h4>
       <div class="menu-item"><img src="./images/digital-storage-64.png" alt="Digital Storage Icon" /> Digital Storage
+        (TBU)
       </div>
-      <div class="menu-item"><img src="./images/numeral-system-60.png" alt="Numeral System Icon" /> Numeral System</div>
+      <div class="menu-item"><img src="./images/numeral-system-60.png" alt="Numeral System Icon" /> Numeral System (TBU)
+      </div>
     </div>
   </div>
 
@@ -415,6 +441,24 @@
       </div>
 
     </div>
+    <div class="date-calculator" style="display: none; background-color: var(--calculator-bg); padding: 20px; border-radius: 10px; color: var(--text-color); width: 360px;">
+      <h2 style="text-align: center; margin-top: 0;">📅 날짜 계산기</h2>
+    
+      <div class="date-row">
+        <label for="fromDate">From</label>
+        <input id="fromDate" type="date" />
+      </div>
+    
+      <div class="date-row">
+        <label for="toDate">Today</label>
+        <input id="toDate" type="date" />
+      </div>
+    
+      <button onclick="calculateDateDiff()" class="btn-operator" style="margin-top: 10px; width: 100%;">계산하기</button>
+    
+      <div id="dateResult" style="margin-top: 20px; text-align: center; font-weight: bold; font-size: 1.1em;"></div>
+    </div>
+
     <div class="side-panel">
       <div class="panel-box">
         <h3>기록</h3>
@@ -542,7 +586,7 @@
 
       document.querySelector(".display").addEventListener("copy", function (e) {
         e.clipboardData.setData("text/plain", display.value);
-        e.preventDefault(); // prevent default copy behavior that might interfere
+        e.preventDefault();
       });
 
 
@@ -597,17 +641,29 @@
       document.getElementById("standardMenu").addEventListener("click", () => {
         document.querySelector(".calculator").style.display = "block";
         document.querySelector(".bmi-calculator").style.display = "none";
+        document.querySelector(".date-calculator").style.display = "none";
         document.querySelector(".side-panel").style.display = "flex";
 
         const container = document.querySelector(".container");
-        container.style.flexDirection = "row";         // ✅ row로 복원
-        container.style.alignItems = "flex-start";     // ✅ 원래 위치 복원
-        container.style.justifyContent = "flex-start"; // ✅ 왼쪽 정렬
+        container.style.flexDirection = "row";
+        container.style.alignItems = "flex-start";
+        container.style.justifyContent = "flex-start";
 
         const bmiChart = document.getElementById("bmiChart");
         if (bmiChart) {
           bmiChart.style.display = "none";
         }
+      });
+
+      document.getElementById("dateMenu").addEventListener("click", () => {
+        document.querySelector(".calculator").style.display = "none";
+        document.querySelector(".bmi-calculator").style.display = "none";
+        document.querySelector(".side-panel").style.display = "none";
+        document.querySelector(".date-calculator").style.display = "block";
+
+        const container = document.querySelector(".container");
+        container.style.flexDirection = "column";
+        container.style.alignItems = "center";
       });
 
       function calculateBMI() {
@@ -636,9 +692,25 @@
 
         if (bmiValueBox && bmiChart) {
           bmiValueBox.textContent = bmi.toFixed(1);
-          bmiChart.style.display = "block"; // ✅ 계산 후 차트 보이게
+          bmiChart.style.display = "block"; 
         }
       }
+
+      function calculateDateDiff() {
+  const from = new Date(document.getElementById("fromDate").value);
+  const to = new Date(document.getElementById("toDate").value);
+  const resultDiv = document.getElementById("dateResult");
+
+  if (isNaN(from.getTime()) || isNaN(to.getTime())) {
+    resultDiv.textContent = "날짜를 모두 입력하세요.";
+    return;
+  }
+
+  const diffTime = Math.abs(to - from);
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+  resultDiv.textContent = `총 ${diffDays}일 차이입니다.`;
+}
 
 
     </script>
