@@ -357,6 +357,38 @@
     #languageToggle {
       z-index: 1000;
     }
+
+    .you-save-container {
+      text-align: center;
+      font-size: 1em;
+      margin: 30px 0;
+      font-weight: bold;
+      color: var(--text-color);
+    }
+
+    .you-save-label {
+      margin-bottom: 8px;
+    }
+
+    .you-save-value {
+      background: rgb(255, 245, 158);
+      color: black;
+      border-radius: 5px;
+      padding: 6px 0;
+    }
+
+    .discount-btn {
+      background-color: var(--btn-number-color);
+      color: var(--text-color);
+      border-radius: 10px;
+      font-size: 18px;
+      padding: 14px;
+      cursor: pointer;
+    }
+
+    .discount-btn:hover {
+      background-color: var(--btn-hover-color);
+    }
   </style>
 </head>
 
@@ -481,29 +513,30 @@
 
       <div style="margin-bottom: 10px;">
         <label>Original price</label>
-        <input type="number" id="originalPriceDisplay"
-  style="width: 100%; padding: 10px; border-radius: 5px; border: none; background: white; color: black; margin-top: 5px;" value="0" />
+        <input type="text" id="originalPriceDisplay"
+          style="width: 90%; padding: 10px; border-radius: 5px; border: none; background: white; color: black; margin-top: 5px;"
+          value="0" />
       </div>
 
       <div style="margin-bottom: 10px;">
         <label>Discount (% off)</label>
-        <input type="number" id="discountPercentDisplay"
-        style="width: 100%; padding: 10px; border-radius: 5px; border: none; background: white; color: black; margin-top: 5px;" value="0" />
+        <input type="text" id="discountPercentDisplay"
+          style="width: 90%; padding: 10px; border-radius: 5px; border: none; background: white; color: black; margin-top: 5px;"
+          value="0" />
       </div>
 
       <div style="margin-bottom: 10px;">
         <label>Final price</label>
         <div id="finalPriceDisplay"
-          style="background: white; color: black; border-radius: 5px; padding: 10px; margin-top: 5px;">0</div>
+          style="width: 90%; background: white; color: black; border-radius: 5px; padding: 10px; margin-top: 5px;">0
+        </div>
       </div>
 
-      <div style="text-align: center; color: #000000; font-size: 0.9em; margin-bottom: 10px; font-weight: bold;">
-        You save <span id="youSaveDisplay"
-          style="background: white; color: black; border-radius: 5px; padding: 4px 8px;">0</span>
+      <div class="you-save-container">
+        <div class="you-save-label">You save</div>
+        <div id="youSaveDisplay" class="you-save-value">0</div>
       </div>
 
-      <input type="text" id="discountInput"
-        style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: none; text-align: right; font-size: 1.2em;" />
 
       <div class="discount-keypad" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
         <button onclick="pressDiscount('7')">7</button>
@@ -514,13 +547,14 @@
         <button onclick="pressDiscount('4')">4</button>
         <button onclick="pressDiscount('5')">5</button>
         <button onclick="pressDiscount('6')">6</button>
-        <button onclick="clearDiscount()" style="background: #eee;">AC</button>
+        <button onclick="clearDiscount()" class="discount-btn">AC</button>
 
         <button onclick="pressDiscount('1')">1</button>
         <button onclick="pressDiscount('2')">2</button>
         <button onclick="pressDiscount('3')">3</button>
         <div></div>
 
+        <div></div>
         <button onclick="pressDiscount('0')">0</button>
         <button onclick="pressDiscount('.')">.</button>
         <div></div>
@@ -789,40 +823,82 @@
     let discountInput = "";
     let discountStep = 0;
 
-    function pressDiscount(val) {
-      discountInput += val;
-      document.getElementById("discountInput").value = discountInput;
+    function pressDiscount(value) {
+      const input = discountStep === 0
+        ? document.getElementById("originalPriceDisplay")
+        : document.getElementById("discountPercentDisplay");
+
+      let raw = input.value.replace(/,/g, "");
+
+      if (value === ".") {
+        if (!raw.includes(".")) {
+          raw += ".";
+        }
+      } else {
+        if (raw === "0") {
+          raw = value;
+        } else {
+          raw += value;
+        }
+      }
+
+      input.value = formatWithCommas(raw);
       updateDiscountValues();
     }
 
     function discountBackspace() {
-      discountInput = discountInput.slice(0, -1);
-      document.getElementById("discountInput").value = discountInput;
+      if (discountStep === 0) {
+        let input = document.getElementById("originalPriceDisplay");
+        input.value = input.value.slice(0, -1) || "0";
+      } else if (discountStep === 1) {
+        let input = document.getElementById("discountPercentDisplay");
+        input.value = input.value.slice(0, -1) || "0";
+      }
+
       updateDiscountValues();
     }
 
     function clearDiscount() {
       discountInput = "";
       discountStep = 0;
-      document.getElementById("discountInput").value = "";
-      document.getElementById("originalPriceDisplay").innerText = "0";
-      document.getElementById("discountPercentDisplay").innerText = "0";
+      document.getElementById("originalPriceDisplay").value = "0";
+      document.getElementById("discountPercentDisplay").value = "0";
       document.getElementById("finalPriceDisplay").innerText = "0";
       document.getElementById("youSaveDisplay").innerText = "0";
     }
 
+    function formatWithCommas(val) {
+      if (!val) return "0";
+      let [intPart, decPart] = val.split(".");
+      intPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return decPart !== undefined ? `${intPart}.${decPart}` : intPart;
+    }
+
     function updateDiscountValues() {
-  const orig = parseFloat(document.getElementById("originalPriceDisplay").value);
-  const percent = parseFloat(document.getElementById("discountPercentDisplay").value); // ← 이 줄
+      const origRaw = document.getElementById("originalPriceDisplay").value.replace(/,/g, "");
+      const percentRaw = document.getElementById("discountPercentDisplay").value.replace(/,/g, "");
 
-  if (isNaN(orig) || isNaN(percent)) return;
+      const orig = parseFloat(origRaw);
+      const percent = parseFloat(percentRaw);
 
-  const discountAmount = (orig * percent) / 100;
-  const final = orig - discountAmount;
+      if (isNaN(orig) || isNaN(percent)) return;
 
-  document.getElementById("finalPriceDisplay").innerText = final.toFixed(2);
-  document.getElementById("youSaveDisplay").innerText = discountAmount.toFixed(2);
-}
+      const discountAmount = (orig * percent) / 100;
+      const final = orig - discountAmount;
+
+      document.getElementById("originalPriceDisplay").value =
+        isNaN(orig) ? "" : formatWithCommas(origRaw);
+
+      document.getElementById("discountPercentDisplay").value =
+        isNaN(percent) ? "" : formatWithCommas(percentRaw);
+
+      document.getElementById("finalPriceDisplay").innerText =
+        final.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+      document.getElementById("youSaveDisplay").innerText =
+        discountAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
     document.getElementById("discountMenu").addEventListener("click", () => {
       document.querySelector(".calculator").style.display = "none";
       document.querySelector(".bmi-calculator").style.display = "none";
@@ -839,27 +915,46 @@
 
     })
 
-    document.getElementById("discountInput").addEventListener("click", () => {
-  if (discountStep === 0) {
-    discountStep = 1;
-    discountInput = "";
-    document.getElementById("discountInput").value = "";
-  }
-});
+    document.getElementById("originalPriceDisplay").addEventListener("input", () => {
+      updateDiscountValues();
+    });
 
-document.getElementById("discountInput").addEventListener("input", (e) => {
-  discountInput = e.target.value;
-  updateDiscountValues();
-});
+    document.getElementById("discountPercentDisplay").addEventListener("input", () => {
+      updateDiscountValues();
+    });
 
-document.getElementById("originalPriceDisplay").addEventListener("input", () => {
-  updateDiscountValues();
-});
+    function clearIfZero(inputId) {
+      const input = document.getElementById(inputId);
+      input.addEventListener("focus", () => {
+        if (input.value === "0") {
+          input.value = "";
+        }
+      });
+    }
 
-document.getElementById("discountPercentDisplay").addEventListener("input", () => {
-  updateDiscountValues();
-});
+    clearIfZero("originalPriceDisplay");
+    clearIfZero("discountPercentDisplay");
 
+    function restoreZeroIfEmpty(inputId) {
+      const input = document.getElementById(inputId);
+      input.addEventListener("blur", () => {
+        if (input.value.trim() === "") {
+          input.value = "0";
+          updateDiscountValues();
+        }
+      });
+    }
+
+    restoreZeroIfEmpty("originalPriceDisplay");
+    restoreZeroIfEmpty("discountPercentDisplay");
+
+    document.getElementById("originalPriceDisplay").addEventListener("click", () => {
+      discountStep = 0;
+    });
+
+    document.getElementById("discountPercentDisplay").addEventListener("click", () => {
+      discountStep = 1;
+    });
   </script>
 </body>
 
