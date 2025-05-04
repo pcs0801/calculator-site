@@ -315,30 +315,44 @@
     body:not(.light-mode) #bmiValueBox {
       color: black;
     }
-    
+
     .date-calculator {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
 
-.date-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
+    .discount-keypad button {
+      padding: 14px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background-color: var(--btn-number-color);
+      color: var(--text-color);
+    }
 
-.date-row label {
-  flex: 1;
-}
+    .discount-keypad button:hover {
+      background-color: var(--btn-hover-color);
+    }
 
-.date-row input {
-  flex: 2;
-  padding: 10px;
-  border-radius: 5px;
-  border: none;
-}
+    .date-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .date-row label {
+      flex: 1;
+    }
+
+    .date-row input {
+      flex: 2;
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+    }
 
     #languageToggle {
       z-index: 1000;
@@ -364,7 +378,7 @@
     </div>
     <div class="menu-section">
       <h4>Finance</h4>
-      <div class="menu-item"><img src="./images/discount-64.png" alt="Discount Icon" /> Discount (TBU)</div>
+      <div class="menu-item" id="discountMenu"><img src="./images/discount-64.png" alt="Discount Icon" /> Discount</div>
       <div class="menu-item"><img src="./images/percentage-50.png" alt="Percentage Icon" /> Percentage (TBU)</div>
       <div class="menu-item"><img src="./images/split-bill-64.png" alt="Split Bill Icon" /> Split Bill (TBU)</div>
     </div>
@@ -439,24 +453,79 @@
           <div style="flex: 1; background: #f15a5a; color: white;">고도비만<br>30~</div>
         </div>
       </div>
-
     </div>
-    <div class="date-calculator" style="display: none; background-color: var(--calculator-bg); padding: 20px; border-radius: 10px; color: var(--text-color); width: 360px;">
+
+    <div class="date-calculator"
+      style="display: none; background-color: var(--calculator-bg); padding: 20px; border-radius: 10px; color: var(--text-color); width: 360px;">
       <h2 style="text-align: center; margin-top: 0;">📅 날짜 계산기</h2>
-    
+
       <div class="date-row">
         <label for="fromDate">From</label>
         <input id="fromDate" type="date" />
       </div>
-    
+
       <div class="date-row">
         <label for="toDate">Today</label>
         <input id="toDate" type="date" />
       </div>
-    
+
       <button onclick="calculateDateDiff()" class="btn-operator" style="margin-top: 10px; width: 100%;">계산하기</button>
-    
+
       <div id="dateResult" style="margin-top: 20px; text-align: center; font-weight: bold; font-size: 1.1em;"></div>
+    </div>
+
+
+    <div class="discount-calculator"
+      style="display: none; background-color: var(--calculator-bg); padding: 20px; border-radius: 10px; color: var(--text-color); width: 360px;">
+      <h2 style="text-align: center; margin-top: 0;">💸 Discount</h2>
+
+      <div style="margin-bottom: 10px;">
+        <label>Original price</label>
+        <input type="number" id="originalPriceDisplay"
+  style="width: 100%; padding: 10px; border-radius: 5px; border: none; background: white; color: black; margin-top: 5px;" value="0" />
+      </div>
+
+      <div style="margin-bottom: 10px;">
+        <label>Discount (% off)</label>
+        <input type="number" id="discountPercentDisplay"
+        style="width: 100%; padding: 10px; border-radius: 5px; border: none; background: white; color: black; margin-top: 5px;" value="0" />
+      </div>
+
+      <div style="margin-bottom: 10px;">
+        <label>Final price</label>
+        <div id="finalPriceDisplay"
+          style="background: white; color: black; border-radius: 5px; padding: 10px; margin-top: 5px;">0</div>
+      </div>
+
+      <div style="text-align: center; color: #000000; font-size: 0.9em; margin-bottom: 10px; font-weight: bold;">
+        You save <span id="youSaveDisplay"
+          style="background: white; color: black; border-radius: 5px; padding: 4px 8px;">0</span>
+      </div>
+
+      <input type="text" id="discountInput"
+        style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: none; text-align: right; font-size: 1.2em;" />
+
+      <div class="discount-keypad" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+        <button onclick="pressDiscount('7')">7</button>
+        <button onclick="pressDiscount('8')">8</button>
+        <button onclick="pressDiscount('9')">9</button>
+        <button onclick="discountBackspace()">⌫</button>
+
+        <button onclick="pressDiscount('4')">4</button>
+        <button onclick="pressDiscount('5')">5</button>
+        <button onclick="pressDiscount('6')">6</button>
+        <button onclick="clearDiscount()" style="background: #eee;">AC</button>
+
+        <button onclick="pressDiscount('1')">1</button>
+        <button onclick="pressDiscount('2')">2</button>
+        <button onclick="pressDiscount('3')">3</button>
+        <div></div>
+
+        <button onclick="pressDiscount('0')">0</button>
+        <button onclick="pressDiscount('.')">.</button>
+        <div></div>
+        <div></div>
+      </div>
     </div>
 
     <div class="side-panel">
@@ -469,251 +538,329 @@
         <ul id="memoryList"></ul>
       </div>
     </div>
+  </div>
 
-    <script>
-      const display = document.getElementById("display");
-      const historyList = document.getElementById("historyList");
-      const memoryList = document.getElementById("memoryList");
-      let currentValue = "";
-      let memory = 0;
+  <script>
+    const display = document.getElementById("display");
+    const historyList = document.getElementById("historyList");
+    const memoryList = document.getElementById("memoryList");
+    let currentValue = "";
+    let memory = 0;
 
-      const symbols = { "×": "*", "÷": "/", "+": "+", "-": "-" };
+    const symbols = { "×": "*", "÷": "/", "+": "+", "-": "-" };
 
-      function setTheme(mode) {
-        document.body.classList.toggle("light-mode", mode === "light");
-      }
+    function setTheme(mode) {
+      document.body.classList.toggle("light-mode", mode === "light");
+    }
 
-      function formatNumber(val) {
-        if (isNaN(val)) return val;
-        const [intPart, decPart] = val.toString().split(".");
-        const formatted = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        return decPart ? formatted + "." + decPart : formatted;
-      }
+    function formatNumber(val) {
+      if (isNaN(val)) return val;
+      const [intPart, decPart] = val.toString().split(".");
+      const formatted = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return decPart ? formatted + "." + decPart : formatted;
+    }
 
-      function updateDisplay(value) {
-        currentValue = value.toString().replace(/,/g, "");
-        display.value = formatNumber(currentValue);
-      }
+    function updateDisplay(value) {
+      currentValue = value.toString().replace(/,/g, "");
+      display.value = formatNumber(currentValue);
+    }
 
-      function press(val) {
-        if (val === "√") updateDisplay(Math.sqrt(parseFloat(currentValue) || 0));
-        else if (val === "x²") updateDisplay(Math.pow(parseFloat(currentValue) || 0, 2));
-        else if (val === "1/x") updateDisplay(1 / (parseFloat(currentValue) || 1));
-        else if (val === "+/-") updateDisplay((parseFloat(currentValue || "0") * -1).toString());
-        else {
-          currentValue += val;
-          updateDisplay(currentValue);
-          currentValue = display.value.replace(/,/g, '');
-        }
-      }
-
-      function calculate() {
-        try {
-          let expr = currentValue;
-          for (const key in symbols) expr = expr.split(key).join(symbols[key]);
-          const result = eval(expr);
-          const formatted = formatNumber(result);
-          const li = document.createElement("li");
-          li.className = "history-item";
-          li.innerHTML = `<div class="history-formula">${currentValue.replace(/([+\-×÷])/g, " $1 ")} =</div><div class="history-result">${formatted}</div>`;
-          li.onclick = () => updateDisplay(result);
-          historyList.insertBefore(li, historyList.firstChild);
-          updateDisplay(result);
-        } catch {
-          updateDisplay(langData[currentLang].error);
-        }
-      }
-
-      function clearAll() { updateDisplay(""); }
-      function clearEntry() { updateDisplay(""); }
-      function backspace() {
-        currentValue = currentValue.trim().slice(0, -1);
+    function press(val) {
+      if (val === "√") updateDisplay(Math.sqrt(parseFloat(currentValue) || 0));
+      else if (val === "x²") updateDisplay(Math.pow(parseFloat(currentValue) || 0, 2));
+      else if (val === "1/x") updateDisplay(1 / (parseFloat(currentValue) || 1));
+      else if (val === "+/-") updateDisplay((parseFloat(currentValue || "0") * -1).toString());
+      else {
+        currentValue += val;
         updateDisplay(currentValue);
-        updateDisplay(currentValue);
+        currentValue = display.value.replace(/,/g, '');
       }
-      function memClear() { memory = 0; memoryList.innerHTML = ""; }
-      function memRecall() { updateDisplay(currentValue + memory.toString()); }
-      function memAdd() { memory += parseFloat(currentValue) || 0; memoryList.innerHTML += `<li>+ ${formatNumber(currentValue)}</li>`; }
-      function memSub() { memory -= parseFloat(currentValue) || 0; memoryList.innerHTML += `<li>- ${formatNumber(currentValue)}</li>`; }
+    }
 
-      document.addEventListener("keydown", (e) => {
-        const key = e.key;
-        if (!isNaN(key) || ["+", "-", "*", "/", "."].includes(key)) {
-          const symbol = key.replace("*", "×").replace("/", "÷");
-          press(symbol);
-        } else if (key === "Enter") calculate();
-        else if (key === "Backspace") backspace();
-        else if (key.toLowerCase() === "c") clearAll();
-      });
-
-      const buttonMap = [
-        ["MC", "MR", "M+", "M-"],
-        ["%", "CE", "C", "⌫"],
-        ["1/x", "x²", "√", "÷"],
-        ["7", "8", "9", "×"],
-        ["4", "5", "6", "-"],
-        ["1", "2", "3", "+"],
-        ["+/-", "0", ".", "="]
-      ];
-
-      const buttonContainer = document.getElementById("buttons");
-      buttonMap.forEach(row =>
-        row.forEach(text => {
-          const btn = document.createElement("button");
-          btn.textContent = text;
-          btn.className = isNaN(text) && ![".", "+/-", "="].includes(text) ? "btn-operator" : "btn-number";
-          if (text === "=") { btn.onclick = calculate; btn.className = "btn-operator"; }
-          else if (text === "C") btn.onclick = clearAll;
-          else if (text === "CE") btn.onclick = clearEntry;
-          else if (text === "⌫") btn.onclick = backspace;
-          else if (text === "MC") btn.onclick = memClear;
-          else if (text === "MR") btn.onclick = memRecall;
-          else if (text === "M+") btn.onclick = memAdd;
-          else if (text === "M-") btn.onclick = memSub;
-          else btn.onclick = () => press(text);
-          buttonContainer.appendChild(btn);
-        })
-      );
-
-      function copyDisplayText() {
-        navigator.clipboard.writeText(display.value).then(() => {
-          console.log("Copied to clipboard");
-        }).catch(err => {
-          console.error("Copy failed", err);
-        });
+    function calculate() {
+      try {
+        let expr = currentValue;
+        for (const key in symbols) expr = expr.split(key).join(symbols[key]);
+        const result = eval(expr);
+        const formatted = formatNumber(result);
+        const li = document.createElement("li");
+        li.className = "history-item";
+        li.innerHTML = `<div class="history-formula">${currentValue.replace(/([+\-×÷])/g, " $1 ")} =</div><div class="history-result">${formatted}</div>`;
+        li.onclick = () => updateDisplay(result);
+        historyList.insertBefore(li, historyList.firstChild);
+        updateDisplay(result);
+      } catch {
+        updateDisplay(langData[currentLang].error);
       }
+    }
 
+    function clearAll() { updateDisplay(""); }
+    function clearEntry() { updateDisplay(""); }
+    function backspace() {
+      currentValue = currentValue.trim().slice(0, -1);
+      updateDisplay(currentValue);
+      updateDisplay(currentValue);
+    }
+    function memClear() { memory = 0; memoryList.innerHTML = ""; }
+    function memRecall() { updateDisplay(currentValue + memory.toString()); }
+    function memAdd() { memory += parseFloat(currentValue) || 0; memoryList.innerHTML += `<li>+ ${formatNumber(currentValue)}</li>`; }
+    function memSub() { memory -= parseFloat(currentValue) || 0; memoryList.innerHTML += `<li>- ${formatNumber(currentValue)}</li>`; }
 
-      document.querySelector(".display").addEventListener("copy", function (e) {
-        e.clipboardData.setData("text/plain", display.value);
-        e.preventDefault();
+    document.addEventListener("keydown", (e) => {
+      const key = e.key;
+      if (!isNaN(key) || ["+", "-", "*", "/", "."].includes(key)) {
+        const symbol = key.replace("*", "×").replace("/", "÷");
+        press(symbol);
+      } else if (key === "Enter") calculate();
+      else if (key === "Backspace") backspace();
+      else if (key.toLowerCase() === "c") clearAll();
+    });
+
+    const buttonMap = [
+      ["MC", "MR", "M+", "M-"],
+      ["%", "CE", "C", "⌫"],
+      ["1/x", "x²", "√", "÷"],
+      ["7", "8", "9", "×"],
+      ["4", "5", "6", "-"],
+      ["1", "2", "3", "+"],
+      ["+/-", "0", ".", "="]
+    ];
+
+    const buttonContainer = document.getElementById("buttons");
+    buttonMap.forEach(row =>
+      row.forEach(text => {
+        const btn = document.createElement("button");
+        btn.textContent = text;
+        btn.className = isNaN(text) && ![".", "+/-", "="].includes(text) ? "btn-operator" : "btn-number";
+        if (text === "=") { btn.onclick = calculate; btn.className = "btn-operator"; }
+        else if (text === "C") btn.onclick = clearAll;
+        else if (text === "CE") btn.onclick = clearEntry;
+        else if (text === "⌫") btn.onclick = backspace;
+        else if (text === "MC") btn.onclick = memClear;
+        else if (text === "MR") btn.onclick = memRecall;
+        else if (text === "M+") btn.onclick = memAdd;
+        else if (text === "M-") btn.onclick = memSub;
+        else btn.onclick = () => press(text);
+        buttonContainer.appendChild(btn);
+      })
+    );
+
+    function copyDisplayText() {
+      navigator.clipboard.writeText(display.value).then(() => {
+        console.log("Copied to clipboard");
+      }).catch(err => {
+        console.error("Copy failed", err);
       });
+    }
 
 
-      let currentLang = 'ko';
-      const langData = {
-        ko: {
-          record: '기록',
-          memory: '메모리',
-          theme: '화면 테마 설정',
-          error: '오류',
-          buttons: {
-            "결과값 복사": "결과값 복사",
+    document.querySelector(".display").addEventListener("copy", function (e) {
+      e.clipboardData.setData("text/plain", display.value);
+      e.preventDefault();
+    });
+
+
+    let currentLang = 'ko';
+    const langData = {
+      ko: {
+        record: '기록',
+        memory: '메모리',
+        theme: '화면 테마 설정',
+        error: '오류',
+        buttons: {
+          "결과값 복사": "결과값 복사",
+        }
+      },
+      en: {
+        record: 'History',
+        memory: 'Memory',
+        theme: 'Theme Mode',
+        error: 'Error',
+        buttons: {
+          "결과값 복사": "Copy Result"
+        }
+      }
+    };
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'ko' ? 'en' : 'ko';
+      document.getElementById('langText').innerText = currentLang === 'ko' ? 'KO' : 'EN';
+      document.querySelector('.panel-box h3').innerText = langData[currentLang].record;
+      document.querySelectorAll('.panel-box h3')[1].innerText = langData[currentLang].memory;
+      document.querySelector('.toggle-label').innerText = langData[currentLang].theme;
+
+      document.querySelectorAll('button').forEach(btn => {
+        const label = btn.innerText.trim();
+        for (const [ko, en] of Object.entries(langData.ko.buttons)) {
+          if (label === ko || label === langData.en.buttons[ko]) {
+            btn.innerText = langData[currentLang].buttons[ko];
           }
-        },
-        en: {
-          record: 'History',
-          memory: 'Memory',
-          theme: 'Theme Mode',
-          error: 'Error',
-          buttons: {
-            "결과값 복사": "Copy Result"
-          }
         }
-      };
+      });
+    }
+    document.getElementById("bmiMenu").addEventListener("click", () => {
+      document.querySelector(".calculator").style.display = "none";
+      document.querySelector(".bmi-calculator").style.display = "flex";
+      document.querySelector(".side-panel").style.display = "none";
+      document.querySelector(".date-calculator").style.display = "none";
+      document.querySelector(".discount-calculator").style.display = "none";
 
-      function toggleLanguage() {
-        currentLang = currentLang === 'ko' ? 'en' : 'ko';
-        document.getElementById('langText').innerText = currentLang === 'ko' ? 'KO' : 'EN';
-        document.querySelector('.panel-box h3').innerText = langData[currentLang].record;
-        document.querySelectorAll('.panel-box h3')[1].innerText = langData[currentLang].memory;
-        document.querySelector('.toggle-label').innerText = langData[currentLang].theme;
+      const container = document.querySelector(".container");
+      container.style.flexDirection = "column";
+      container.style.alignItems = "center";
+    });
 
-        document.querySelectorAll('button').forEach(btn => {
-          const label = btn.innerText.trim();
-          for (const [ko, en] of Object.entries(langData.ko.buttons)) {
-            if (label === ko || label === langData.en.buttons[ko]) {
-              btn.innerText = langData[currentLang].buttons[ko];
-            }
-          }
-        });
+    document.getElementById("standardMenu").addEventListener("click", () => {
+      document.querySelector(".calculator").style.display = "block";
+      document.querySelector(".bmi-calculator").style.display = "none";
+      document.querySelector(".date-calculator").style.display = "none";
+      document.querySelector(".side-panel").style.display = "flex";
+      document.querySelector(".discount-calculator").style.display = "none";
+
+      const container = document.querySelector(".container");
+      container.style.flexDirection = "row";
+      container.style.alignItems = "flex-start";
+      container.style.justifyContent = "flex-start";
+
+      const bmiChart = document.getElementById("bmiChart");
+      if (bmiChart) {
+        bmiChart.style.display = "none";
       }
-      document.getElementById("bmiMenu").addEventListener("click", () => {
-        document.querySelector(".calculator").style.display = "none";
-        document.querySelector(".bmi-calculator").style.display = "flex";
-        document.querySelector(".side-panel").style.display = "none";
+    });
 
-        const container = document.querySelector(".container");
-        container.style.flexDirection = "column";
-        container.style.alignItems = "center";
-      });
+    document.getElementById("dateMenu").addEventListener("click", () => {
+      document.querySelector(".calculator").style.display = "none";
+      document.querySelector(".bmi-calculator").style.display = "none";
+      document.querySelector(".side-panel").style.display = "none";
+      document.querySelector(".date-calculator").style.display = "block";
+      document.querySelector(".discount-calculator").style.display = "none";
 
-      document.getElementById("standardMenu").addEventListener("click", () => {
-        document.querySelector(".calculator").style.display = "block";
-        document.querySelector(".bmi-calculator").style.display = "none";
-        document.querySelector(".date-calculator").style.display = "none";
-        document.querySelector(".side-panel").style.display = "flex";
+      const container = document.querySelector(".container");
+      container.style.flexDirection = "column";
+      container.style.alignItems = "center";
+    });
 
-        const container = document.querySelector(".container");
-        container.style.flexDirection = "row";
-        container.style.alignItems = "flex-start";
-        container.style.justifyContent = "flex-start";
+    function calculateBMI() {
+      const height = parseFloat(document.getElementById("heightInput").value);
+      const weight = parseFloat(document.getElementById("weightInput").value);
+      const resultDiv = document.getElementById("bmiResult");
 
-        const bmiChart = document.getElementById("bmiChart");
-        if (bmiChart) {
-          bmiChart.style.display = "none";
-        }
-      });
-
-      document.getElementById("dateMenu").addEventListener("click", () => {
-        document.querySelector(".calculator").style.display = "none";
-        document.querySelector(".bmi-calculator").style.display = "none";
-        document.querySelector(".side-panel").style.display = "none";
-        document.querySelector(".date-calculator").style.display = "block";
-
-        const container = document.querySelector(".container");
-        container.style.flexDirection = "column";
-        container.style.alignItems = "center";
-      });
-
-      function calculateBMI() {
-        const height = parseFloat(document.getElementById("heightInput").value);
-        const weight = parseFloat(document.getElementById("weightInput").value);
-        const resultDiv = document.getElementById("bmiResult");
-
-        if (!height || !weight || height <= 0 || weight <= 0) {
-          resultDiv.textContent = "올바른 값을 입력해주세요.";
-          return;
-        }
-
-        const bmi = weight / Math.pow(height / 100, 2);
-        let status = "";
-
-        if (bmi < 18.5) status = "저체중";
-        else if (bmi < 23) status = "정상";
-        else if (bmi < 25) status = "과체중";
-        else if (bmi < 30) status = "비만";
-        else status = "고도비만";
-
-        resultDiv.textContent = `당신의 BMI는 ${bmi.toFixed(1)}이며, ${status}입니다.`;
-
-        const bmiValueBox = document.getElementById("bmiValueBox");
-        const bmiChart = document.getElementById("bmiChart");
-
-        if (bmiValueBox && bmiChart) {
-          bmiValueBox.textContent = bmi.toFixed(1);
-          bmiChart.style.display = "block"; 
-        }
+      if (!height || !weight || height <= 0 || weight <= 0) {
+        resultDiv.textContent = "올바른 값을 입력해주세요.";
+        return;
       }
 
-      function calculateDateDiff() {
-  const from = new Date(document.getElementById("fromDate").value);
-  const to = new Date(document.getElementById("toDate").value);
-  const resultDiv = document.getElementById("dateResult");
+      const bmi = weight / Math.pow(height / 100, 2);
+      let status = "";
 
-  if (isNaN(from.getTime()) || isNaN(to.getTime())) {
-    resultDiv.textContent = "날짜를 모두 입력하세요.";
-    return;
-  }
+      if (bmi < 18.5) status = "저체중";
+      else if (bmi < 23) status = "정상";
+      else if (bmi < 25) status = "과체중";
+      else if (bmi < 30) status = "비만";
+      else status = "고도비만";
 
-  const diffTime = Math.abs(to - from);
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      resultDiv.textContent = `당신의 BMI는 ${bmi.toFixed(1)}이며, ${status}입니다.`;
 
-  resultDiv.textContent = `총 ${diffDays}일 차이입니다.`;
+      const bmiValueBox = document.getElementById("bmiValueBox");
+      const bmiChart = document.getElementById("bmiChart");
+
+      if (bmiValueBox && bmiChart) {
+        bmiValueBox.textContent = bmi.toFixed(1);
+        bmiChart.style.display = "block";
+      }
+    }
+
+    function calculateDateDiff() {
+      const from = new Date(document.getElementById("fromDate").value);
+      const to = new Date(document.getElementById("toDate").value);
+      const resultDiv = document.getElementById("dateResult");
+
+      if (isNaN(from.getTime()) || isNaN(to.getTime())) {
+        resultDiv.textContent = "날짜를 모두 입력하세요.";
+        return;
+      }
+
+      const diffTime = Math.abs(to - from);
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+      resultDiv.textContent = `총 ${diffDays}일 차이입니다.`;
+    }
+
+    let discountInput = "";
+    let discountStep = 0;
+
+    function pressDiscount(val) {
+      discountInput += val;
+      document.getElementById("discountInput").value = discountInput;
+      updateDiscountValues();
+    }
+
+    function discountBackspace() {
+      discountInput = discountInput.slice(0, -1);
+      document.getElementById("discountInput").value = discountInput;
+      updateDiscountValues();
+    }
+
+    function clearDiscount() {
+      discountInput = "";
+      discountStep = 0;
+      document.getElementById("discountInput").value = "";
+      document.getElementById("originalPriceDisplay").innerText = "0";
+      document.getElementById("discountPercentDisplay").innerText = "0";
+      document.getElementById("finalPriceDisplay").innerText = "0";
+      document.getElementById("youSaveDisplay").innerText = "0";
+    }
+
+    function updateDiscountValues() {
+  const orig = parseFloat(document.getElementById("originalPriceDisplay").value);
+  const percent = parseFloat(document.getElementById("discountPercentDisplay").value); // ← 이 줄
+
+  if (isNaN(orig) || isNaN(percent)) return;
+
+  const discountAmount = (orig * percent) / 100;
+  const final = orig - discountAmount;
+
+  document.getElementById("finalPriceDisplay").innerText = final.toFixed(2);
+  document.getElementById("youSaveDisplay").innerText = discountAmount.toFixed(2);
 }
+    document.getElementById("discountMenu").addEventListener("click", () => {
+      document.querySelector(".calculator").style.display = "none";
+      document.querySelector(".bmi-calculator").style.display = "none";
+      document.querySelector(".date-calculator").style.display = "none";
+      document.querySelector(".discount-calculator").style.display = "block";
+      document.querySelector(".side-panel").style.display = "none";
 
+      const container = document.querySelector(".container");
+      container.style.flexDirection = "column";
+      container.style.alignItems = "center";
 
-    </script>
+      clearDiscount();
+      discountStep = 0;
+
+    })
+
+    document.getElementById("discountInput").addEventListener("click", () => {
+  if (discountStep === 0) {
+    discountStep = 1;
+    discountInput = "";
+    document.getElementById("discountInput").value = "";
+  }
+});
+
+document.getElementById("discountInput").addEventListener("input", (e) => {
+  discountInput = e.target.value;
+  updateDiscountValues();
+});
+
+document.getElementById("originalPriceDisplay").addEventListener("input", () => {
+  updateDiscountValues();
+});
+
+document.getElementById("discountPercentDisplay").addEventListener("input", () => {
+  updateDiscountValues();
+});
+
+  </script>
 </body>
 
 </html>
