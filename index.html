@@ -389,6 +389,15 @@
     .discount-btn:hover {
       background-color: var(--btn-hover-color);
     }
+
+    .center-wrapper {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: none;
+      z-index: 10;
+    }
   </style>
 </head>
 
@@ -411,7 +420,8 @@
     <div class="menu-section">
       <h4>Finance</h4>
       <div class="menu-item" id="discountMenu"><img src="./images/discount-64.png" alt="Discount Icon" /> Discount</div>
-      <div class="menu-item"><img src="./images/percentage-50.png" alt="Percentage Icon" /> Percentage (TBU)</div>
+      <div class="menu-item" id="percentageMenu"><img src="./images/percentage-50.png" alt="Percentage Icon" />
+        Percentage</div>
       <div class="menu-item"><img src="./images/split-bill-64.png" alt="Split Bill Icon" /> Split Bill (TBU)</div>
     </div>
     <div class="menu-section">
@@ -573,7 +583,53 @@
       </div>
     </div>
   </div>
+  <div class="center-wrapper" style="display: none;">
+    <div class="percentage-calculator"
+      style="background-color: var(--calculator-bg); padding: 20px; border-radius: 10px; color: var(--text-color); width: 360px;">
+      <h2 style="text-align: center; margin-top: 0;">📊 Percentage</h2>
 
+      <div style="margin-bottom: 10px;">
+        <label>Total</label>
+        <input type="text" id="percentTotalInput"
+          style="width: 90%; padding: 10px; border-radius: 5px; border: none; background: white; color: black; margin-top: 5px;"
+          value="0" />
+      </div>
+
+      <div style="margin-bottom: 10px;">
+        <label>Percent (%)</label>
+        <input type="text" id="percentValueInput"
+          style="width: 90%; padding: 10px; border-radius: 5px; border: none; background: white; color: black; margin-top: 5px;"
+          value="0" />
+      </div>
+
+      <div style="margin-top: 20px; font-weight: bold; font-size: 1.2em; text-align: center;">
+        Result: <span id="percentResultDisplay">0</span>
+      </div>
+
+      <div class="discount-keypad"
+        style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 20px;">
+        <button onclick="pressPercentage('7')">7</button>
+        <button onclick="pressPercentage('8')">8</button>
+        <button onclick="pressPercentage('9')">9</button>
+        <button onclick="percentBackspace()">⌫</button>
+
+        <button onclick="pressPercentage('4')">4</button>
+        <button onclick="pressPercentage('5')">5</button>
+        <button onclick="pressPercentage('6')">6</button>
+        <button onclick="clearPercentageInputs()" class="discount-btn">AC</button>
+
+        <button onclick="pressPercentage('1')">1</button>
+        <button onclick="pressPercentage('2')">2</button>
+        <button onclick="pressPercentage('3')">3</button>
+        <div></div>
+
+        <div></div>
+        <button onclick="pressPercentage('0')">0</button>
+        <button onclick="pressPercentage('.')">.</button>
+        <div></div>
+      </div>
+    </div>
+  </div>
   <script>
     const display = document.getElementById("display");
     const historyList = document.getElementById("historyList");
@@ -738,6 +794,7 @@
       document.querySelector(".side-panel").style.display = "none";
       document.querySelector(".date-calculator").style.display = "none";
       document.querySelector(".discount-calculator").style.display = "none";
+      document.querySelector(".center-wrapper").style.display = "none";
 
       const container = document.querySelector(".container");
       container.style.flexDirection = "column";
@@ -745,21 +802,22 @@
     });
 
     document.getElementById("standardMenu").addEventListener("click", () => {
+      document.querySelector(".center-wrapper").style.display = "none";
       document.querySelector(".calculator").style.display = "block";
       document.querySelector(".bmi-calculator").style.display = "none";
       document.querySelector(".date-calculator").style.display = "none";
       document.querySelector(".side-panel").style.display = "flex";
       document.querySelector(".discount-calculator").style.display = "none";
+      document.querySelector(".percentage-calculator").style.display = "none";
 
       const container = document.querySelector(".container");
+      container.style.position = "absolute";
+      container.style.top = "8%";
+      container.style.left = "40%";
+      container.style.transform = "none";
       container.style.flexDirection = "row";
       container.style.alignItems = "flex-start";
       container.style.justifyContent = "flex-start";
-
-      const bmiChart = document.getElementById("bmiChart");
-      if (bmiChart) {
-        bmiChart.style.display = "none";
-      }
     });
 
     document.getElementById("dateMenu").addEventListener("click", () => {
@@ -768,6 +826,7 @@
       document.querySelector(".side-panel").style.display = "none";
       document.querySelector(".date-calculator").style.display = "block";
       document.querySelector(".discount-calculator").style.display = "none";
+      document.querySelector(".center-wrapper").style.display = "none";
 
       const container = document.querySelector(".container");
       container.style.flexDirection = "column";
@@ -905,6 +964,7 @@
       document.querySelector(".date-calculator").style.display = "none";
       document.querySelector(".discount-calculator").style.display = "block";
       document.querySelector(".side-panel").style.display = "none";
+      document.querySelector(".center-wrapper").style.display = "none";
 
       const container = document.querySelector(".container");
       container.style.flexDirection = "column";
@@ -940,8 +1000,8 @@
       input.addEventListener("blur", () => {
         if (input.value.trim() === "") {
           input.value = "0";
-          updateDiscountValues();
         }
+        updateDiscountValues();
       });
     }
 
@@ -955,6 +1015,103 @@
     document.getElementById("discountPercentDisplay").addEventListener("click", () => {
       discountStep = 1;
     });
+
+    let percentStep = 0;
+
+    function pressPercentage(value) {
+      const input = percentStep === 0
+        ? document.getElementById("percentTotalInput")
+        : document.getElementById("percentValueInput");
+
+      let raw = input.value.replace(/,/g, "");
+
+      if (value === ".") {
+        if (!raw.includes(".")) {
+          raw += ".";
+        }
+      } else {
+        if (raw === "0") {
+          raw = value;
+        } else {
+          raw += value;
+        }
+      }
+
+      input.value = formatWithCommas(raw);
+      updatePercentageValues();
+    }
+
+    document.getElementById("percentTotalInput").addEventListener("input", updatePercentageValues);
+document.getElementById("percentValueInput").addEventListener("input", updatePercentageValues);
+
+    function percentBackspace() {
+      const input = percentStep === 0
+        ? document.getElementById("percentTotalInput")
+        : document.getElementById("percentValueInput");
+
+      input.value = input.value.slice(0, -1) || "0";
+      updatePercentageValues();
+    }
+
+    function clearPercentageInputs() {
+      percentStep = 0;
+      document.getElementById("percentTotalInput").value = "0";
+      document.getElementById("percentValueInput").value = "0";
+      document.getElementById("percentResultDisplay").innerText = "0";
+    }
+
+    function updatePercentageValues() {
+      const totalRaw = document.getElementById("percentTotalInput").value.replace(/,/g, "");
+      const percentRaw = document.getElementById("percentValueInput").value.replace(/,/g, "");
+
+      const total = parseFloat(totalRaw);
+      const percent = parseFloat(percentRaw);
+
+      if (isNaN(total) || isNaN(percent)) return;
+
+      const result = (total * percent) / 100;
+
+      document.getElementById("percentTotalInput").value = formatWithCommas(totalRaw);
+      document.getElementById("percentValueInput").value = formatWithCommas(percentRaw);
+
+      document.getElementById("percentResultDisplay").innerText =
+        result.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    document.getElementById("percentTotalInput").addEventListener("click", () => {
+      percentStep = 0;
+    });
+
+    document.getElementById("percentValueInput").addEventListener("click", () => {
+      percentStep = 1;
+    });
+
+    document.getElementById("percentageMenu").addEventListener("click", () => {
+      document.querySelector(".calculator").style.display = "none";
+      document.querySelector(".bmi-calculator").style.display = "none";
+      document.querySelector(".date-calculator").style.display = "none";
+      document.querySelector(".discount-calculator").style.display = "none";
+      document.querySelector(".side-panel").style.display = "none";
+
+      document.querySelector(".center-wrapper").style.display = "flex";
+      document.querySelector(".percentage-calculator").style.display = "block";
+      document.querySelector(".center-wrapper").style.flexDirection = "column";
+      document.querySelector(".center-wrapper").style.alignItems = "center";
+
+      clearPercentageInputs();
+    });
+
+    function clearIfZero(inputId) {
+  const input = document.getElementById(inputId);
+  input.addEventListener("focus", () => {
+    if (input.value === "0") {
+      input.value = "";
+    }
+    updatePercentageValues();
+  });
+}
+clearIfZero("percentTotalInput");
+clearIfZero("percentValueInput");
   </script>
 </body>
 
